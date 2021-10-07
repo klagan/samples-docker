@@ -39,12 +39,12 @@ There is an environment variable `TF_ACTION` which designates which Terraform ac
 export TF_ACTION=init && docker-compose up
 
 # run a terraform plan
-export TF_ACTION="plan -out=plan.tfplan"
+export TF_ACTION='plan -out=plan.tfplan'
 docker-compose up
 
 # run a terraform show plan
-export TF_ACTION="show plan.tfplan"
+export TF_ACTION='show plan.tfplan'
 
 # run an terraform apply (with plan file)
-export TF_ACTION="apply -auto-approve plan.tfplan" && docker-compose up
+export TF_ACTION='apply -auto-approve plan.tfplan' && docker-compose up
 ```
