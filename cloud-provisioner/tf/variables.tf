@@ -1,7 +1,11 @@
-# variable "appId" {
-#   description = "Azure Kubernetes Service Cluster service principal"
-# }
+locals {
+  location = "uksouth"
 
-# variable "password" {
-#   description = "Azure Kubernetes Service Cluster password"
-# }
+  tags = {
+    client          = "kam"
+    environment     = "demo"
+    "business unit" = "rnd"
+  }
+}
+
+resource "random_pet" "prefix" {}

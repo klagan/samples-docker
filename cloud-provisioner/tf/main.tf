@@ -1,12 +1,7 @@
-resource "random_pet" "prefix" {}
-
 resource "azurerm_resource_group" "default" {
   name     = "${random_pet.prefix.id}-rg"
-  location = "West US 2"
-
-  tags = {
-    environment = "Demo"
-  }
+  location = local.location
+  tags     = local.tags
 }
 
 resource "azurerm_kubernetes_cluster" "default" {
@@ -22,11 +17,6 @@ resource "azurerm_kubernetes_cluster" "default" {
     os_disk_size_gb = 30
   }
 
-  # service_principal {
-  #   client_id     = var.appId
-  #   client_secret = var.password
-  # }
-
   identity {
     type = "SystemAssigned"
   }
@@ -35,7 +25,5 @@ resource "azurerm_kubernetes_cluster" "default" {
     enabled = true
   }
 
-  tags = {
-    environment = "Demo"
-  }
+  tags = local.tags
 }

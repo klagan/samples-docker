@@ -46,5 +46,15 @@ docker-compose up
 export TF_ACTION='show plan.tfplan'
 
 # run an terraform apply (with plan file)
-export TF_ACTION='apply -auto-approve plan.tfplan' && docker-compose up
+export TF_ACTION='apply plan.tfplan' && docker-compose up
+
+# run a terraform destroy plan
+export TF_ACTION='plan -destroy -out=destroy.tfplan' && docker-compose up
+
+# run a terraform destroy (with plan file)
+export TF_ACTION='show destroy.tfplan'
+
+# run an terraform destroy (with plan file)
+export TF_ACTION='apply destroy.tfplan' && docker-compose up
+
 ```
