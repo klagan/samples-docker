@@ -1,0 +1,30 @@
+version: '3.2'
+
+services:
+  terraform:
+    build:
+      context: ./build/.
+    image: ghcr.io/klagan/cloud-provisioner
+    container_name: cloud-provisioner
+    working_dir: /tf
+    command: ${TF_ACTION}
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+
+       # ensure the source and target match in the container if using certificates
+       # this is where host and guest locate the certificates
+       # in this example you can see my source is a relative path for the host but the full (explicit) path for the guest
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - TERM=xterm
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - TF_ACTION
+    stdin_open: true 
+    tty: true 

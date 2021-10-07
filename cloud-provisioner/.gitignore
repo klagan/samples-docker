@@ -1,0 +1,5 @@
+auth/
+tf/terraform.tfstate
+tf/terraform.tfstate.backup
+.terraform/
+*.tfplan
