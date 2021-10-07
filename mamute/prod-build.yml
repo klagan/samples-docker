@@ -1,0 +1,51 @@
+parameters:
+  - name: nugetUid
+  - name: nugetPwd 
+  - name: dockerRegistry 
+
+steps:
+  - task: Docker@2
+    displayName: 'build app production image'
+    inputs:
+      containerRegistry: ${{ parameters.dockerRegistry }}
+      repository: klagan/docker-images/mamute
+      command: build
+      Dockerfile: mamute/app/Dockerfile
+      buildContext: mamute/app
+      tags: |
+        $(Build.BuildId)
+        latest
+      arguments: '--build-arg NUGET_UID=${{ parameters.nugetUid }} --build-arg NUGET_PWD=${{ parameters.nugetPwd }} --quiet'
+
+  - task: Docker@2
+    displayName: 'build proxy production image'
+    inputs:
+      containerRegistry: ${{ parameters.dockerRegistry }}
+      repository: klagan/docker-images/mamute-proxy
+      command: build
+      Dockerfile: mamute/proxy/Dockerfile
+      buildContext: mamute/proxy
+      tags: |
+        $(Build.BuildId)
+        latest
+      arguments: '--build-arg NUGET_UID=${{ parameters.nugetUid }} --build-arg NUGET_PWD=${{ parameters.nugetPwd }} --quiet'
+
+  - task: Docker@2
+    displayName: 'push app beta container'
+    inputs:
+      containerRegistry: ${{ parameters.dockerRegistry }}
+      repository: klagan/docker-images/mamute
+      command: push
+      tags: |
+        $(Build.BuildId)
+        latest
+  
+  - task: Docker@2
+    displayName: 'push app beta container'
+    inputs:
+      containerRegistry: ${{ parameters.dockerRegistry }}
+      repository: klagan/docker-images/mamute-proxy
+      command: push
+      tags: |
+        $(Build.BuildId)
+        latest

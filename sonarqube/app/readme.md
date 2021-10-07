@@ -1,0 +1,1 @@
+add `sonarqube` (app) specific artefacts here

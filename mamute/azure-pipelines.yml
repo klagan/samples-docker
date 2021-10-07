@@ -1,0 +1,63 @@
+name: 1.0$(rev:.r)
+
+parameters:
+  - name: AgentName
+    displayName: "Agent Name"
+    type: string
+    default: 'Azure Pipelines'
+    values:
+    - 'Azure Pipelines'
+    - 'Linux Agents'
+    - 'MS Windows Agents'
+    - 'Builders'
+  - name: DockerRegistry
+    displayName: "Docker Service Connection"
+    default: 'github-docker'
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+      - develop/*
+
+variables:
+- name: dockerRegistry
+  value: ${{ parameters.DockerRegistry }}
+# - group: "Development Pipeline"
+
+stages:
+  - stage: "Build"
+    pool:
+          name: ${{ parameters.AgentName }}
+          vmImage: 'ubuntu-latest'
+          # demands: 
+          # - Docker
+    jobs:
+        - job:
+          displayName: "Build image"
+          steps:
+
+          - checkout: self
+            persistCredentials: true
+            clean: true
+
+          - task: Docker@2
+            displayName: login
+            inputs:
+              containerRegistry: ${{ parameters.DockerRegistry }}
+              command: login  
+
+          - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+            - template: prod-build.yml
+              parameters:
+                nugetUid: $(NUGET-UID)
+                nugetPwd: $(NUGET-PWD)
+                dockerRegistry: $(dockerRegistry)
+
+          - ${{ if ne(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+            - template: beta-build.yml
+              parameters:
+                nugetUid: $(NUGET_UID)
+                nugetPwd: $(NUGET-PWD)
+                dockerRegistry: $(dockerRegistry)

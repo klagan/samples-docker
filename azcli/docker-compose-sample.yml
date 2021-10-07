@@ -1,0 +1,32 @@
+version: '3.2'
+
+services:
+  account1:
+    build:
+      context: .
+    image: klagan/azcli
+    container_name: account1
+    volumes:
+       - type: bind
+         source: .
+         target: /var/tmp
+    environment:
+      - TERM=xterm
+      - K_az=account1
+    stdin_open: true 
+    tty: true 
+
+  account2:
+    build:
+      context: .
+    image: klagan/azcli
+    container_name: account2
+    volumes:
+       - type: bind
+         source: .
+         target: /var/tmp
+    environment:
+      - TERM=xterm
+      - K_az=account2
+    stdin_open: true 
+    tty: true 

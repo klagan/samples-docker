@@ -1,0 +1,14 @@
+sonarqube/db/data
+.DS_Store
+mamute/.DS_Store
+sonarqube/db/sqlbackup
+sonarqube/db/sqldata
+sonarqube/db/sqllog
+sonarqube/db/sqlsystem
+sonarqube/db/sqlsystem/secrets
+ghost/ghost_2020-12-31.tar
+ghost/mysql_2020-12-31.tar
+azcli/*.env
+azcli/*.pem
+azcli/*.pfx
+azcli/docker-compose.yml

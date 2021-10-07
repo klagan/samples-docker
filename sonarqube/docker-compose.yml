@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+
+  proxy:
+    image: nginx:1.19.2
+    container_name: sonarqube-proxy
+    ports:
+      - "80:8080"
+      - "8080:8080"
+
+    restart: always
+    volumes:
+     - ./proxy/conf.d/:/etc/nginx/conf.d/:ro
+    depends_on: 
+      - app
+    networks:
+      - sonarnet
+
+  app:
+    image: sonarqube:8.4.2-community
+    container_name: sonarqube-app
+    restart: always
+    environment:
+      - SONARQUBE_JDBC_URL=${SONARQUBE_DATABASE_CONNECTIONSTRING}
+      - SONARQUBE_JDBC_USERNAME=${SONARQUBE_DATABASE_USERNAME}
+      - SONARQUBE_JDBC_PASSWORD=${SONARQUBE_DATABASE_PASSWORD}
+    networks:
+      - sonarnet
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2017-GA-ubuntu
+    container_name: sonarqube-db
+    restart: always
+    ports:
+      - 1433:1433
+    environment:
+      - MSSQL_PID=Developer
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=testing#01
+    volumes:
+      - ./db/sqlsystem:/var/opt/mssql/
+      - ./db/sqldata:/var/opt/sqlserver/data
+      - ./db/sqllog:/var/opt/sqlserver/log
+      - ./db/sqlbackup:/var/opt/sqlserver/backup
+    networks:
+      - sonarnet
+
+networks:
+  sonarnet:
+    driver: bridge
