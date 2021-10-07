@@ -1,6 +1,17 @@
 # Getting started
 
-This docker image aims to contain the cloud provisioning tool-set for portability.  The image would mount local dependencies e.g. source code, authentication certificates, etc. and use them against the tool-set
+This `docker-compose` aims to contain the cloud provisioning tool-set for portability.  The image will mount local dependencies e.g. source code, authentication certificates, etc. and use them against the tool-sets defined in the `docker-compose file`.  
+
+There are multiple `docker-compose` services to define the various stages of a standard `terraform` deployment:
+
+- init (tf-init)
+- lint (checkov)
+- plan (tf-plan)
+- show plan (tf-show-plan)
+- apply (tf-apply)
+- plan destroy (tf-plan-destroy)
+- show destroy (tf-show-destroy)
+- destroy (tf-destroy)
 
 The `tf` folder is the location of Terraform files. The example used in this sample is for Azure AKS.
 
@@ -30,6 +41,15 @@ export ARM_TENANT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 # storage account access key (used for remote backend)
 export ARM_ACCESS_KEY=""
+
+# backend storage account name
+export BACKEND_STORAGE_ACCOUNT_NAME="myStorage"
+
+# backend container name 
+export BACKEND_CONTAINER_NAME="myContainer"
+
+# backend path to state file
+export BACKEND_STATE_FILE="some/example.tfstate"
 ```
 
 ## How to convert a `.pem` certificate to `.pfx` certificate
@@ -44,32 +64,58 @@ openssl pkcs12 -export -in my.pem -out my.pfx
 
 The `docker-compose` configuration is designed to house the configuration of the provisioning environment for easy portability and low footprint.  This may not be suitable for all scenarios in which case you may run the provisioning scripts manually.
 
-There is an environment variable `TF_ACTION` which designates which Terraform action to perform.  The `docker-compose` file mounts two folders: `./tf` and `./auth` which should contain your Terraform scripts and authentication certificates when required.
+The `docker-compose` file mounts two folders: `./tf` and `./auth` which should contain your `Terraform` scripts and authentication certificates when required.
 
 ```terraform
-# run a terraform (local) init (default action)
-export TF_ACTION=init && docker-compose up
+# run checkov on the terraform folder
+docker-compose up tf-lint
 
-# run a terraform (remote) init (remember to rename the `backend.tf` file)
-export TF_ACTION='init -backend-config storage_account_name=myStorageAccount -backend-config container_name=myContainer -backend-config key=tf/kam.tfstate' && docker-compose up
+# run a terraform init and backend configuration
+docker-compose up tf-init
 
 # run a terraform plan
-export TF_ACTION='plan -out=plan.tfplan'
-docker-compose up
+docker-compose up tf-plan
 
 # run a terraform show plan
-export TF_ACTION='show plan.tfplan'
+docker-compose up tf-show-plan
 
 # run an terraform apply (with plan file)
-export TF_ACTION='apply plan.tfplan' && docker-compose up
+docker-compose up tf-apply
 
 # run a terraform destroy plan
-export TF_ACTION='plan -destroy -out=destroy.tfplan' && docker-compose up
+docker-compose up tf-plan-destroy
 
 # run a terraform destroy (with plan file)
-export TF_ACTION='show destroy.tfplan'
+docker-compose up -tf-destroy
 
-# run an terraform destroy (with plan file)
-export TF_ACTION='apply destroy.tfplan' && docker-compose up
+# run a custom terraform command
+export TF_ACTION='<terraform command arguments>' && docker-compose up terraform
+# eg: export TF_ACTION='plan -out=custom-filename.tfplan' && docker-compose up terraform
 
 ```
+
+## How to switch to a local backend storage and back again
+
+It is not always possible or preferred to use a remote backend for state storage - although it is more secure.
+
+It is useful when developing to use a local backend.  
+
+To do this you must rename the `backend.tf` to anything that does not end in `.tf`.  This will prevent the `Terraform` CLI from picking up the file and expecting a remote backend configuration.  
+
+Then we must migrate the state away from the previously configured remote backend.  To accomplish this we must make use of the custom `Terraform` option of this tool-set.
+
+```bash
+# custom terraform call to migrate the remote state and revert to a local backend
+export TF_ACTION='init -migrate-state' && docker-compose up terraform
+```
+
+You should be presented with a confirmation similar to the following:
+
+```bash
+Initializing the backend...
+ Terraform has detected youre unconfiguring your previously set "azurerm" backend.
+
+ Successfully unset the backend "azurerm". Terraform will now operate locally.
+```
+
+To revert back to using the default state of a remote backend storage we must rename the `backend.tf` back to `backend.tf` and then run `docker-compose up tf-init` which should migrate the state and reconfigure the connection.
