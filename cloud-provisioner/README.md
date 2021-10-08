@@ -119,3 +119,15 @@ Initializing the backend...
 ```
 
 To revert back to using the default state of a remote backend storage we must rename the `backend.tf` back to `backend.tf` and then run `docker-compose up tf-init` which should migrate the state and reconfigure the connection.
+
+## Blastradius
+
+[source](https://github.com/28mm/blast-radius)
+
+```bash
+pip3 install blastradius
+
+blast-radius --server [tf-folder]
+```
+
+> use 127.0.0.1 rather than localhost e.g. `http://127.0.0.1:500`
