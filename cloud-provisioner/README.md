@@ -21,7 +21,7 @@ The following environment variables are required to run as a service principal.
 
 The Terraform CLI will use these credentials to authenticate against Azure.  (These details should **not** be stored in a code repository. They could be generated dynamically at runtime for CI/CD pipelines)
 
-> You must ensure that the `docker-compose` and the `ARM_CERTIFICATE_PATH` environment variable match locations and mounts.  The image will need to point to the same location inside the container. 
+> You must ensure that the `docker-compose` and the `ARM_CERTIFICATE_PATH` environment variable match locations and mounts.  The image will need to point to the same location inside the container.
 
 ```bash
 # service principal application id
@@ -113,7 +113,7 @@ You should be presented with a confirmation similar to the following:
 
 ```bash
 Initializing the backend...
- Terraform has detected youre unconfiguring your previously set "azurerm" backend.
+ Terraform has detected youre un-configuring your previously set "azurerm" backend.
 
  Successfully unset the backend "azurerm". Terraform will now operate locally.
 ```
