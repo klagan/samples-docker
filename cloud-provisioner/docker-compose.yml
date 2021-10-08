@@ -1,6 +1,16 @@
 version: '3.2'
 
 services:
+  # blastradius:
+  #   image: local/blastradius
+  #   build:
+  #     context: ./build/.
+  #   cap_add:
+  #     - SYS_ADMIN
+  #   security_opt:
+  #     - apparmor:unconfined
+
+
   tf-lint:
     image: bridgecrew/checkov:2
     container_name: tf-lint
