@@ -132,6 +132,12 @@ blast-radius --server [tf-folder]
 
 > use 127.0.0.1 rather than localhost e.g. `http://127.0.0.1:500`
 
+## Set Powershell `PSModulePath` environment variable
+
+```azurepowershell
+$env:PSModulePath = $env:PSModulePath+":$pwd"
+```
+
 ## Clear Powershell modules
 
 ```powershell
