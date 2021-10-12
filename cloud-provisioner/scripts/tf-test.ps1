@@ -1,7 +1,7 @@
 
-Write-Host $PWD
+Write-Host "Working folder: $PWD"
 
-Initialize-Tf 
-Lint-Tf
-Plan-Tf
-ShowPlan-Tf
+Use-TfInit
+Use-TfLint
+Use-TfPlan
+Use-TfShowplan

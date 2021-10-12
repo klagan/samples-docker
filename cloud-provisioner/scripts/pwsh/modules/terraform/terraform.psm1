@@ -48,7 +48,7 @@ function Confirm-EnvironmentVariables {
     return $true
 }
 
-function Lint-Tf {
+function Use-TfLint {
 
     $environmentCheck=Confirm-EnvironmentVariables
 
@@ -57,7 +57,7 @@ function Lint-Tf {
     }
 }
 
-function Initialize-Tf {
+function Use-TfInit {
 
     $environmentCheck=Confirm-EnvironmentVariables
 
@@ -67,7 +67,7 @@ function Initialize-Tf {
     }
 }
 
-function Plan-Tf {
+function Use-TfPlan {
 
     $environmentCheck=Confirm-EnvironmentVariables
 
@@ -78,7 +78,7 @@ function Plan-Tf {
     }
 }
 
-function ShowPlan-Tf {
+function Use-TfShowplan {
 
     $environmentCheck=Confirm-EnvironmentVariables
 
@@ -88,7 +88,7 @@ function ShowPlan-Tf {
     }
 }
 
-function PlanDestroy-Tf {
+function Use-TfPlandestroy {
 
     $environmentCheck=Confirm-EnvironmentVariables
 
@@ -98,7 +98,7 @@ function PlanDestroy-Tf {
     }
 }
 
-function ShowDestroy-Tf {
+function Use-TfShowdestroy {
 
     $environmentCheck=Confirm-EnvironmentVariables
 
@@ -108,7 +108,7 @@ function ShowDestroy-Tf {
     }
 }
 
-function Apply-Tf {
+function Use-TfApply {
 
     $environmentCheck=Confirm-EnvironmentVariables
 
@@ -119,11 +119,11 @@ function Apply-Tf {
 }
 
 
-Export-ModuleMember -Function Initialize-Tf
-Export-ModuleMember -Function Lint-Tf
-Export-ModuleMember -Function Plan-Tf
-Export-ModuleMember -Function ShowPlan-Tf
-Export-ModuleMember -Function PlanDestroy-Tf
-Export-ModuleMember -Function ShowDestroy-Tf
-Export-ModuleMember -Function Apply-Tf
+Export-ModuleMember -Function USe-TfInit
+Export-ModuleMember -Function Use-TfLint
+Export-ModuleMember -Function Use-TfPlan
+Export-ModuleMember -Function Use-TfShowplan
+Export-ModuleMember -Function Use-TfPlandestroy
+Export-ModuleMember -Function Use-TfShowDestroy
+Export-ModuleMember -Function Use-TfApply
 
