@@ -1,0 +1,196 @@
+version: '3.2'
+
+services:
+  # blastradius:
+  #   image: local/blastradius
+  #   build:
+  #     context: ./build/.
+  #   cap_add:
+  #     - SYS_ADMIN
+  #   security_opt:
+  #     - apparmor:unconfined
+
+
+  tf-lint:
+    image: bridgecrew/checkov:2
+    container_name: tf-lint
+    working_dir: /tf
+    command: -d /tf --quiet
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+
+  terraform:
+    image: hashicorp/terraform:1.0.8
+    container_name: terraform
+    working_dir: /tf
+    command: ${TF_ACTION}
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+      # only required for service principal certificate if used for authentication
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - ARM_ACCESS_KEY
+      - ARM_CLIENT_CERTIFICATE_PASSWORD
+      - TF_ACTION
+
+  tf-init:
+    image: hashicorp/terraform:1.0.8
+    container_name: tf-init
+    working_dir: /tf
+    command: init -migrate-state -backend-config storage_account_name=${BACKEND_STORAGE_ACCOUNT_NAME} -backend-config container_name=${BACKEND_CONTAINER_NAME} -backend-config key=${BACKEND_STATE_FILE}
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+      # only required for service principal certificate if used for authentication
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - ARM_ACCESS_KEY
+      - ARM_CLIENT_CERTIFICATE_PASSWORD
+      - BACKEND_STORAGE_ACCOUNT_NAME
+      - BACKEND_CONTAINER_NAME
+      - BACKEND_STATE_FILE
+    stdin_open: true 
+    tty: true 
+
+  tf-plan:
+    image: hashicorp/terraform:1.0.8
+    container_name: tf-plan
+    working_dir: /tf
+    command: plan -out=plans/plan.tfplan
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+      # only required for service principal certificate if used for authentication
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - ARM_ACCESS_KEY
+      - ARM_CLIENT_CERTIFICATE_PASSWORD
+
+  tf-plan-destroy:
+    image: hashicorp/terraform:1.0.8
+    container_name: tf-plan-destroy
+    working_dir: /tf
+    command: plan -destroy -out=plans/destroy.tfplan
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+      # only required for service principal certificate if used for authentication
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - ARM_ACCESS_KEY
+      - ARM_CLIENT_CERTIFICATE_PASSWORD
+
+  tf-show-plan:
+    image: hashicorp/terraform:1.0.8
+    container_name: tf-show-plan
+    working_dir: /tf
+    command: show plans/plan.tfplan
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+      # only required for service principal certificate if used for authentication
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - ARM_ACCESS_KEY
+      - ARM_CLIENT_CERTIFICATE_PASSWORD
+
+  tf-apply:
+    image: hashicorp/terraform:1.0.8
+    container_name: tf-apply
+    working_dir: /tf
+    command: apply plans/plan.tfplan
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+      # only required for service principal certificate if used for authentication
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - ARM_ACCESS_KEY
+      - ARM_CLIENT_CERTIFICATE_PASSWORD
+
+  tf-destroy:
+    image: hashicorp/terraform:1.0.8
+    container_name: tf-destroy
+    working_dir: /tf
+    command: apply plans/destroy.tfplan
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+      # only required for service principal certificate if used for authentication
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - ARM_ACCESS_KEY
+      - ARM_CLIENT_CERTIFICATE_PASSWORD
+
+  tf-show-destroy:
+    image: hashicorp/terraform:1.0.8
+    container_name: tf-show-destroy
+    working_dir: /tf
+    command: show plans/destroy.tfplan
+    volumes:
+      - type: bind
+        source: ./tf
+        target: /tf
+      # only required for service principal certificate if used for authentication
+      - type: bind
+        source: ./auth
+        target: /home/klagan/source/github/samples-docker/cloud-provisioner/auth
+    environment:
+      - ARM_CLIENT_ID
+      - ARM_CLIENT_CERTIFICATE_PATH
+      - ARM_SUBSCRIPTION_ID
+      - ARM_TENANT_ID
+      - ARM_ACCESS_KEY
+      - ARM_CLIENT_CERTIFICATE_PASSWORD
