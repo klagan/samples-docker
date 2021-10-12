@@ -131,3 +131,9 @@ blast-radius --server [tf-folder]
 ```
 
 > use 127.0.0.1 rather than localhost e.g. `http://127.0.0.1:500`
+
+## Clear Powershell modules
+
+```powershell
+@("terraform") | %{&remove-module -erroraction:silentlycontinue $_}
+```
