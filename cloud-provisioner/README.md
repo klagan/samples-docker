@@ -1,5 +1,36 @@
 # Getting started
 
+## `powershell` implementation
+
+This implementation is the preferred solution.  It is a script that should sit inside your `terraform` folder with a set of environment variables.
+
+This implementation simplifies the setup, operation and maintenance of the infrastructure construction.  
+
+The `set-environment.ps1` file configures the environment variables from the Azure key vault.  You must copy and configure your own version and ensure you do not upload it to a repository as it would be an insecure artefact.  The script details some changes required.
+
+The script `./tf/pwsh/terraform.ps1` contains the logic of managing infrastructure with `terraform` and other IaC tools.
+
+Below are some samples:
+
+```powershell
+# init, plan and apply the terraform changes
+./terraform.ps1 -Init -Plan -Apply
+
+# init and plan a destroy of the terraform
+./terraform.ps1 -Init -PlanDestroy 
+
+# apply the destroy of the terraform
+./terraform.ps1 -Init -Destroy
+```
+
+> in the future I will be adding functions:
+>  
+> - upload the plan files
+> - download the plan files
+> - run linting operations
+
+## `docker-compose` implementation
+
 This `docker-compose` aims to contain the cloud provisioning tool-set for portability.  The image will mount local dependencies e.g. source code, authentication certificates, etc. and use them against the tool-sets defined in the `docker-compose file`.  
 
 There are multiple `docker-compose` services to define the various stages of a standard `terraform` deployment:
