@@ -30,7 +30,7 @@ export ARM_CLIENT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 # service principal certificate path
 export ARM_CLIENT_CERTIFICATE_PATH="/home/kam/my_certificates/certificate.pfx"
 
-# service principal password - (may not be required)
+# service principal password - (if required)
 export ARM_CLIENT_CERTIFICATE_PASSWORD=""
 
 # subscription identifier
@@ -40,7 +40,7 @@ export ARM_SUBSCRIPTION_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 export ARM_TENANT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 # storage account access key (used for remote backend)
-export ARM_ACCESS_KEY=""
+export ARM_ACCESS_KEY="<crazy string>"
 
 # backend storage account name
 export BACKEND_STORAGE_ACCOUNT_NAME="myStorage"
