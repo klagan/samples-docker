@@ -38,9 +38,21 @@ function Show-Configuration {
     }
 
     $config | Format-Table Name, Action
+}
 
+function Init() {
+
+    terraform init -migrate-state -backend-config storage_account_name=$env:BACKEND_STORAGE_ACCOUNT_NAME -backend-config container_name=$env:BACKEND_CONTAINER_NAME -backend-config key=$env:BACKEND_STATE_FILE
+}
+
+function Plan() {
+    
+    terraform plan -out="$createPlanFileName"
+}
+
+function Confirm-Apply {
     try {
-        if ($Plan -or $Destroy) {
+        if ($Apply -or $Destroy) {
 
             $planFile = $Plan ? $createPlanFileName : $destroyPlanFileName
 
@@ -56,6 +68,9 @@ function Show-Configuration {
             
             Write-Host "Changes: ($add to add, $change to change, $remove to remove) " -NoNewLine -ForegroundColor Yellow
             Write-Host "(Confirm the terraform plan)" -ForegroundColor Red
+            $userResponse = (Read-Host -Prompt "`nHappy with configuration? (Y/N)") -eq 'y' ? $true : $false
+            
+            return $userResponse
         }
     }
     catch {
@@ -64,19 +79,20 @@ function Show-Configuration {
     }
 }
 
-function Init() {
-
-    terraform init -migrate-state -backend-config storage_account_name=$env:BACKEND_STORAGE_ACCOUNT_NAME -backend-config container_name=$env:BACKEND_CONTAINER_NAME -backend-config key=$env:BACKEND_STATE_FILE
-}
-
-function Plan() {
-    
-    terraform plan -out="$createPlanFileName"
-}
-
 function Apply() {
 
-    terraform apply "$createPlanFileName"
+    try {
+        if ($Apply) {
+
+            $userResponse = $(Confirm-Apply)
+
+            $userResponse -eq $true ? (terraform apply "$createPlanFileName") : (Write-Host "User Cancelled")
+        }
+    }
+    catch {
+        Write-Error -Message "Oops, ran into an issue!"
+        Exit
+    }
 }
 
 function PlanDestroy() {
@@ -87,7 +103,18 @@ function PlanDestroy() {
 
 function Destroy() {
 
-    terraform apply "$destroyPlanFileName"
+    try {
+        if ($Destroy) {
+
+            $userResponse = $(Confirm-Apply)
+
+            $userResponse -eq $true ? (terraform apply "$destroyPlanFileName") : (Write-Host "User Cancelled")
+        }
+    }
+    catch {
+        Write-Error -Message "Oops, ran into an issue!"
+        Exit
+    }
 }
 
 if (-Not $terraformInstalled) {
@@ -100,7 +127,8 @@ mkdir -p $planFolder
 
 Show-Configuration
 
-$userResponse = (Read-Host -Prompt "`nHappy with configuration? (Y/N)") -eq 'y' ? $true : $false
+# $userResponse = (Read-Host -Prompt "`nHappy with configuration? (Y/N)") -eq 'y' ? $true : $false
+$userResponse = $true
 
 if ($userResponse -eq $true) {
     $Init ? (Init) : ($null)
