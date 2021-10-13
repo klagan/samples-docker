@@ -2,9 +2,11 @@ $ErrorActionPreference = "Continue"
 # $DebugPreference = "Continue"
 # $InformationPreference = "Continue"
 
-# i have created two environment variables to pull the values from to keep the secrets on the host
+# two environment variables: ARM_SUBSCRIPTION_ID and MY_VAULT_NAME must be populated manually.  
+# These are used to pull the values from to keep the secrets on the host
 # $env:ARM_SUBSCRIPTION_ID=''
 # $env:MY_VAULT_NAME=''
+
 $subscriptionId = $env:ARM_SUBSCRIPTION_ID
 $certName = 'kamtest'
 $vaultName = $env:MY_VAULT_NAME
