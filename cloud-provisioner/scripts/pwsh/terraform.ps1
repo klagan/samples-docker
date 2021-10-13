@@ -38,6 +38,30 @@ function Show-Configuration {
     }
 
     $config | Format-Table Name, Action
+
+    try {
+        if ($Plan -or $Destroy) {
+
+            $planFile = $Plan ? $createPlanFileName : $destroyPlanFileName
+
+            $jsonPlan = "{0}.json" -f $planFile
+            $(terraform show -no-color -json "$planFile") > $jsonPlan
+
+            $planObj = Get-Content $jsonPlan | ConvertFrom-Json
+            $resourceChanges = $planObj.resource_changes
+            
+            $add = ($resourceChanges | Where-Object {$_.change.actions -contains "create"}).length
+            $change = ($resourceChanges | Where-Object {$_.change.actions -contains "update"}).length
+            $remove = ($resourceChanges | Where-Object {$_.change.actions -contains "delete"}).length
+            
+            Write-Host "Changes: ($add to add, $change to change, $remove to remove) " -NoNewLine -ForegroundColor Yellow
+            Write-Host "(Confirm the terraform plan)" -ForegroundColor Red
+        }
+    }
+    catch {
+        Write-Error -Message "Oops, ran into an issue!"
+        Exit
+    }
 }
 
 function Init() {
@@ -51,13 +75,14 @@ function Plan() {
 }
 
 function Apply() {
-    
+
     terraform apply "$createPlanFileName"
 }
 
 function PlanDestroy() {
 
     terraform plan -destroy -out="$destroyPlanFileName"
+    terraform show -no-color -json "$destroyPlanFileName" > "$destroyPlanFileName".json
 }
 
 function Destroy() {
@@ -75,7 +100,7 @@ mkdir -p $planFolder
 
 Show-Configuration
 
-$userResponse = (Read-Host -Prompt "Happy with configuration? (Y/N)") -eq 'y' ? $true : $false
+$userResponse = (Read-Host -Prompt "`nHappy with configuration? (Y/N)") -eq 'y' ? $true : $false
 
 if ($userResponse -eq $true) {
     $Init ? (Init) : ($null)

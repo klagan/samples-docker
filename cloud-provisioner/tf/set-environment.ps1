@@ -17,7 +17,8 @@ if (Test-Path -Path $certificateFilePath) {
     # service principal password - (if required)
     $env:ARM_CLIENT_CERTIFICATE_PASSWORD=$servicePrincipalPassword
     # subscription identifier
-    $env:ARM_SUBSCRIPTION_ID=$(az account subscription list --query "[?displayName=='$subscriptionName'].{subscriptionId:subscriptionId}" --output tsv)
+    # $env:ARM_SUBSCRIPTION_ID=$(az account subscription list --query "[?displayName=='$subscriptionName'].{subscriptionId:subscriptionId}" --output tsv) # requires an az cli extension installed
+    $env:ARM_SUBSCRIPTION_ID=$(az account list --query "[?name=='$subscriptionName'].{id:id}" --output tsv)
     # tenant identifier
     $env:ARM_TENANT_ID=$(az account list --query "[?name=='$subscriptionName'].{tenantId:tenantId}" --output tsv)
     # storage account access key (used for remote backend)
