@@ -52,7 +52,7 @@ The script `./scripts/pwsh/terraform.ps1` contains the logic for managing infras
 
 Below are some samples:
 
-```azurepowershell
+```powershell
 # init, plan and apply the terraform changes
 ./terraform.ps1 -Init -Plan -Apply
 
@@ -196,7 +196,7 @@ You should be presented with a confirmation similar to the following:
 
 ```bash
 Initializing the backend...
- Terraform has detected youre un-configuring your previously set "azurerm" backend.
+ Terraform has detected you are un-configuring your previously set "azurerm" backend.
 
  Successfully unset the backend "azurerm". Terraform will now operate locally.
 ```
