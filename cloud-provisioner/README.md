@@ -1,18 +1,58 @@
 # Getting started
 
-## `powershell` implementation
+## Azure `powershell` implementation
 
 This implementation is the preferred solution.  It is a script that should sit inside your `terraform` folder with a set of environment variables.
 
-This implementation simplifies the setup, operation and maintenance of the infrastructure construction.  
+This implementation simplifies the setup, operation and maintenance of the infrastructure construction and employs two technologies:
 
-The `set-environment.ps1` file configures the environment variables from the Azure key vault.  You must copy and configure your own version and ensure you do not upload it to a repository as it would be an insecure artefact.  The script details some changes required.
+- Powershell core
+- AZ CLI
 
-The script `./tf/pwsh/terraform.ps1` contains the logic of managing infrastructure with `terraform` and other IaC tools.
+### Configuration
+
+The following environment variables are required for the `terraform` scripts to function.
+
+```bash
+# service principal application id
+$env:ARM_CLIENT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+# service principal certificate path
+$env:ARM_CLIENT_CERTIFICATE_PATH="/home/kam/my_certificates/certificate.pfx"
+
+# service principal password - (if required)
+$env:ARM_CLIENT_CERTIFICATE_PASSWORD=""
+
+# subscription identifier
+$env:ARM_SUBSCRIPTION_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+# tenant identifier
+$env:ARM_TENANT_ID="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+# storage account access key (used for remote backend)
+$env:ARM_ACCESS_KEY="<crazy string>"
+
+# backend storage account name
+$env:BACKEND_STORAGE_ACCOUNT_NAME="myStorage"
+
+# backend container name 
+$env:BACKEND_CONTAINER_NAME="myContainer"
+
+# backend path to state file
+$env:BACKEND_STATE_FILE="something/example.tfstate"
+```
+
+This can be achieved in many different ways. One example is the `./scripts/set-environment.ps1` script file which configures the environment variables from the Azure key vault.  
+
+You can copy and configure your own version of this file. **Ensure you do not upload it to a repository** as it would be an insecure artefact the wider world would have access to.  
+
+### The `terraform` deployment
+
+The script `./scripts/pwsh/terraform.ps1` contains the logic for managing infrastructure with `terraform` and other IaC tools.
 
 Below are some samples:
 
-```powershell
+```azurepowershell
 # init, plan and apply the terraform changes
 ./terraform.ps1 -Init -Plan -Apply
 
@@ -25,11 +65,11 @@ Below are some samples:
 
 > in the future I will be adding functions:
 >  
-> - upload the plan files
-> - download the plan files
+> - upload the plan files to cloud storage
+> - download the plan files from cloud storage
 > - run linting operations
 
-## `docker-compose` implementation
+## The `docker-compose` implementation (deprecated)
 
 This `docker-compose` aims to contain the cloud provisioning tool-set for portability.  The image will mount local dependencies e.g. source code, authentication certificates, etc. and use them against the tool-sets defined in the `docker-compose file`.  
 
@@ -174,15 +214,3 @@ blast-radius --server [tf-folder]
 ```
 
 > use 127.0.0.1 rather than localhost e.g. `http://127.0.0.1:500`
-
-## Set Powershell `PSModulePath` environment variable
-
-```azurepowershell
-$env:PSModulePath = $env:PSModulePath+":$pwd"
-```
-
-## Clear Powershell modules
-
-```powershell
-@("terraform") | %{&remove-module -erroraction:silentlycontinue $_}
-```
