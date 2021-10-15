@@ -42,7 +42,7 @@ function Show-Configuration {
 
 function Init() {
 
-    terraform init -backend-config storage_account_name=$env:BACKEND_STORAGE_ACCOUNT_NAME -backend-config container_name=$env:BACKEND_CONTAINER_NAME -backend-config key=$env:BACKEND_STATE_FILE
+    terraform init -reconfigure -backend-config storage_account_name=$env:BACKEND_STORAGE_ACCOUNT_NAME -backend-config container_name=$env:BACKEND_CONTAINER_NAME -backend-config key=$env:BACKEND_STATE_FILE
 }
 
 function Plan() {
