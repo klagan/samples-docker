@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghrc.io/klagan/net5.0
+    image: ghcr.io/klagan/net5:1.0
     container_name: net5
     restart: "no"
     volumes:

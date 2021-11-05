@@ -8,6 +8,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/dotnet:0-${VARIANT} AS ENVIRONMENT
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
+LABEL org.opencontainers.image.source https://github.com/klagan/samples-docker
+
 # add .dotnet tools to path
 ENV PATH /root/.dotnet/tools:$PATH
 
