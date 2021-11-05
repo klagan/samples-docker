@@ -2,7 +2,7 @@
 
 Repository of docker images for various things
 
-## Uploading to GitHUb registry
+## Uploading to GitHub registry
 
 ```
 echo $PAT | docker login ghcr.io -u <USERNAME> --password-stdin
