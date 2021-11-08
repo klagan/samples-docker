@@ -1,0 +1,21 @@
+version: '3.7'
+services:
+  environment:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VARIANT: "5.0-bullseye-slim"
+    image: ghcr.io/klagan/dotnet/sdk:5.0
+    container_name: net5
+    restart: "no"
+    volumes:
+      - type: bind
+        source: .
+        target: /source
+      - type: bind
+        source: ${HOME}/.nuget
+        target: /home/vscode/.nuget
+    user: vscode
+    environment:
+    - DOCKER_BUILDKIT=1
